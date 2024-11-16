@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload and Preview Image</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Upload Medical Report</h1>
+    <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" onsubmit="return showTable()">
+        <div class="image-upload">
+            <input type="file" id="image-input" name="file" accept="image/*" onchange="previewImage(event)">
+            <button type="button" onclick="clearImage()">Cancel</button>
+            <button type="submit">Submit</button>
+        </div>
+        <div class="preview-section">
+            <img id="image-preview" alt="Image Preview">
+            <div id="table-section" class="hidden">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Value</th>
+                            <th>Unit</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        {% for result in test_results %}
+                        <tr>
+                            <td>{{ result['test_name'] }}</td>
+                            <td>{{ result['value'] }}</td>
+                            <td>{{ result['unit'] }}</td>
+                            <td>{{ result['confidence'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>      
+
+<script>
+    function previewImage(event) {
+        const imagePreview = document.getElementById('image-preview');
+        const file = event.target.files[0];
+        if (file) {
+            imagePreview.src = URL.createObjectURL(file);
+            imagePreview.style.display = 'block';
+        }
+    }
+
+    function clearImage() {
+        const imageInput = document.getElementById('image-input');
+        const imagePreview = document.getElementById('image-preview');
+        imageInput.value = null;
+        imagePreview.src = '';
+        imagePreview.style.display = 'none';
+    }
+
+    function showTable() {
+        document.getElementById('table-section').classList.remove('hidden');
+        return true;
+    }
+</script>
+
+</body>
+</html>
